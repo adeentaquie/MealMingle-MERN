@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import classes from '../styling/Login.module.css';
+import classes from '../styling/Home.module.css';
 import ImageSlideshow from '../components/images/ImageSlideshow';
 
 export default function Home() {
