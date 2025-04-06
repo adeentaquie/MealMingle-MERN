@@ -7,7 +7,7 @@ function App() {
     <Router>
       <Layout>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/home" element={<Home />} />
           {/* Add more routes here like /community and /meals */}
         </Routes>
       </Layout>

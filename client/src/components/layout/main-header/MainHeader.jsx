@@ -9,7 +9,7 @@ export default function MainHeader() {
 
       <MainHeaderBackground />
       <header className={classes.header}>
-        <Link className={classes.logo} to="/">
+        <Link className={classes.logo} to="/home">
           <img src={logoImg} alt="logo image" />
           MEAL MINGLE
         </Link>
