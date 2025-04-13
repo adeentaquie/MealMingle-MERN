@@ -1,28 +1,90 @@
-
-import { useState } from "react"
-import styles from "../styling/SignUpForm.module.css"
-import { Link } from "react-router-dom"
+import { useState } from "react";
+import { useNavigate,Link } from "react-router-dom";
+import styles from "../styling/SignUpForm.module.css";
 
 const SignupForm = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-  })
+  });
+
+  const [loading, setLoading] = useState(false); // Track loading state
+  const [errorMessage, setErrorMessage] = useState(""); // Track error messages
+  const [validationErrors, setValidationErrors] = useState({}); // Track validation errors
+  const navigate = useNavigate(); // Initialize navigate hook
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
-    }))
-  }
+    }));
+  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log("Form submitted:", formData)
-    // Here you would typically send the data to your backend
-  }
+  // Validation function
+  const validateForm = () => {
+    let errors = {};
+
+    // Name validation
+    if (!formData.name) {
+      errors.name = "Full name is required";
+    }
+
+    // Email validation
+    if (!formData.email) {
+      errors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      errors.email = "Please enter a valid email address";
+    }
+
+    // Password validation
+    if (!formData.password) {
+      errors.password = "Password is required";
+    } else if (formData.password.length < 3) {
+      errors.password = "Password should be at least 3 characters long";
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0; // Return true if no errors
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Validate the form
+    if (!validateForm()) {
+      return; // Stop submission if there are validation errors
+    }
+
+    setLoading(true); // Set loading to true while request is in progress
+    setErrorMessage(""); // Clear any previous error messages
+
+    try {
+      const response = await fetch("http://localhost:5000/api/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log("User created successfully:", data);
+        navigate("/"); // Redirect to homepage after successful signup
+      } else {
+        console.error("Error:", data.message);
+        setErrorMessage(data.message); // Set error message if signup fails
+      }
+    } catch (error) {
+      console.error("Error during form submission:", error);
+      setErrorMessage("Something went wrong. Please try again."); // Set error message if network request fails
+    } finally {
+      setLoading(false); // Set loading to false after the request is complete
+    }
+  };
 
   return (
     <div className={styles.signupContainer}>
@@ -44,6 +106,9 @@ const SignupForm = () => {
               placeholder="John Doe"
               required
             />
+            {validationErrors.name && (
+              <p className={styles.errorText}>{validationErrors.name}</p>
+            )}
           </div>
 
           <div className={styles.formGroup}>
@@ -57,6 +122,9 @@ const SignupForm = () => {
               placeholder="john@example.com"
               required
             />
+            {validationErrors.email && (
+              <p className={styles.errorText}>{validationErrors.email}</p>
+            )}
           </div>
 
           <div className={styles.formGroup}>
@@ -67,15 +135,24 @@ const SignupForm = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="At least 8 characters"
+              placeholder="At least 3 characters"
               required
             />
+            {validationErrors.password && (
+              <p className={styles.errorText}>{validationErrors.password}</p>
+            )}
           </div>
 
           <button type="submit" className={styles.signupButton}>
             Create Account
           </button>
         </form>
+
+        {/* Show loading message while the request is being processed */}
+        {loading && <p className={styles.loadingText}>Please wait, creating your account...</p>}
+
+        {/* Show error message if any */}
+        {errorMessage && <p className={styles.errorText}>{errorMessage}</p>}
 
         <div className={styles.socialSignup}>
           <div className={styles.divider}>
@@ -120,7 +197,7 @@ const SignupForm = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SignupForm
+export default SignupForm;

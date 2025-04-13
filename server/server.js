@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const signUpRoutes = require('./routes/signUpRoutes');
+const loginRoutes=require('./routes/loginRoute.js')
 
 // Load environment variables from .env file
 dotenv.config();
@@ -22,6 +23,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 // Routes
 app.use('/api', signUpRoutes);  // Register the signUp route
+app.use('/api', loginRoutes);  // Login route
 
 // Start the server
 app.listen(port, () => {

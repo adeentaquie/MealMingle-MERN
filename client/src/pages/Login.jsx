@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Spline from "@splinetool/react-spline";
 import logo from "../assets/logo.png"; // ✅ Make sure you have this image
 import styles from "../styling/Login.module.css";
@@ -8,22 +8,45 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(""); // Track error messages
+  const navigate = useNavigate(); // Use useNavigate hook for redirection
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setErrorMessage(""); // Clear previous error message
 
-    setTimeout(() => {
-      setIsLoading(false);
-      console.log("Login attempt with:", email);
-    }, 1500);
+    // Simulate API call to validate user credentials
+    try {
+      const response = await fetch("http://localhost:5000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log("Login successful:", data);
+        // Redirect user after successful login
+        navigate("/dashboard"); // Example: Navigate to the dashboard
+      } else {
+        console.error("Invalid credentials:", data.message);
+        setErrorMessage(data.message || "Invalid email or password"); // Show error message
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      setErrorMessage("Something went wrong. Please try again later.");
+    } finally {
+      setIsLoading(false); // Set loading to false after request is completed
+    }
   };
 
   return (
     <div className={styles.container}>
       <div className={styles.leftPanel}>
-        
-
         <div className={styles.overlay}>
           <div className={styles.content}>
             <h1>Meal Mingle</h1>
@@ -83,11 +106,12 @@ export default function Login() {
             </button>
           </form>
 
+          {/* Show error message if credentials are invalid */}
+          {errorMessage && <p className={styles.errorText}>{errorMessage}</p>}
+
           <div className={styles.divider}>
             <span>OR</span>
           </div>
-
-          
 
           <p className={styles.signupText}>
             Don't have an account?{" "}
