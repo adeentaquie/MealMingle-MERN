@@ -1,37 +1,35 @@
-// Dashboard.js
-import { useEffect, useState } from "react";
+// src/pages/Dashboard.js
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchDashboardSuccess, fetchDashboardFailure, setLoading } from "../redux/slices/dashboardSlice";
 import styles from "../styling/Dashboard.module.css"; // Add styles
 
 export default function Dashboard() {
   const { userId } = useParams(); // Get userId from URL
-  const [mealsShared, setMealsShared] = useState(0);
-  const [comments, setComments] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("");
+  const { mealsShared, comments, loading, errorMessage } = useSelector((state) => state.dashboard); // Access state from Redux
+  const dispatch = useDispatch(); // Dispatch actions
 
-  // Fetch user dashboard data from the backend
   useEffect(() => {
     const fetchDashboardData = async () => {
+      dispatch(setLoading()); // Set loading to true before the request
+
       try {
         const response = await fetch(`http://localhost:5000/api/dashboard/${userId}`);
         const data = await response.json();
 
         if (response.ok) {
-          setMealsShared(data.mealsShared);
-          setComments(data.comments);
+          dispatch(fetchDashboardSuccess({ mealsShared: data.mealsShared, comments: data.comments }));
         } else {
-          setErrorMessage(data.message || "Failed to load dashboard data.");
+          dispatch(fetchDashboardFailure({ message: data.message || "Failed to load dashboard data." }));
         }
       } catch (error) {
-        setErrorMessage("Error fetching dashboard data.");
-      } finally {
-        setLoading(false);
+        dispatch(fetchDashboardFailure({ message: "Error fetching dashboard data." }));
       }
     };
 
     fetchDashboardData();
-  }, [userId]);
+  }, [dispatch, userId]); // Re-run this effect when the userId changes
 
   if (loading) {
     return (
@@ -48,8 +46,8 @@ export default function Dashboard() {
     <div className={styles.dashboardContainer}>
       <h1>Welcome to Your Dashboard</h1>
       <div className={styles.dashboardInfo}>
-        <h2 data-value={mealsShared}>Your Meals Shared</h2>
-        <h2 data-value={comments}>Your Comments</h2>
+        <h2 data-value={mealsShared}>Your Meals Shared: {mealsShared}</h2>
+        <h2 data-value={comments}>Your Comments: {comments}</h2>
       </div>
       {errorMessage && <p className={styles.errorText}>{errorMessage}</p>}
     </div>

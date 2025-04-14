@@ -1,19 +1,21 @@
+// src/pages/Login.js
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../assets/logo.png"; // ✅ Make sure you have this image
+import { useDispatch, useSelector } from "react-redux";
+import { loginSuccess, loginFailure, setLoading } from "../redux/slices/authSlice"; // Import actions
+import logo from "../assets/logo.png";
 import styles from "../styling/Login.module.css";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(""); // Track error messages
+  const { loading, errorMessage } = useSelector((state) => state.auth); // Get loading state and error from Redux
+  const dispatch = useDispatch(); // Dispatch actions
   const navigate = useNavigate(); // Use useNavigate hook for redirection
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setErrorMessage(""); // Clear previous error message
+    dispatch(setLoading()); // Set loading to true on form submit
 
     try {
       const response = await fetch("http://localhost:5000/api/login", {
@@ -30,19 +32,20 @@ export default function Login() {
         console.log("Login successful:", data);
 
         // Store the userId in localStorage for persistence
-        localStorage.setItem("userId", data.userId); // Store userId in localStorage
+        localStorage.setItem("userId", data.userId);
+
+        // Dispatch loginSuccess to store the userId in Redux
+        dispatch(loginSuccess({ userId: data.userId }));
 
         // Redirect to the personalized dashboard
-        navigate(`/dashboard/${data.userId}`); // Redirect to personalized dashboard with userId in the URL
+        navigate(`/dashboard/${data.userId}`);
       } else {
         console.error("Invalid credentials:", data.message);
-        setErrorMessage(data.message || "Invalid email or password"); // Show error message
+        dispatch(loginFailure({ message: data.message || "Invalid email or password" }));
       }
     } catch (error) {
       console.error("Error during login:", error);
-      setErrorMessage("Something went wrong. Please try again later.");
-    } finally {
-      setIsLoading(false); // Set loading to false after request is completed
+      dispatch(loginFailure({ message: "Something went wrong. Please try again later." }));
     }
   };
 
@@ -57,7 +60,6 @@ export default function Login() {
         </div>
       </div>
 
-      {/* RIGHT PANEL: Login Form */}
       <div className={styles.rightPanel}>
         <div className={styles.formContainer}>
           <div className={styles.logoContainer}>
@@ -103,12 +105,11 @@ export default function Login() {
               <label htmlFor="remember">Remember me for 30 days</label>
             </div>
 
-            <button type="submit" className={styles.loginButton} disabled={isLoading}>
-              {isLoading ? "Logging in..." : "Log In"}
+            <button type="submit" className={styles.loginButton} disabled={loading}>
+              {loading ? "Logging in..." : "Log In"}
             </button>
           </form>
 
-          {/* Show error message if credentials are invalid */}
           {errorMessage && <p className={styles.errorText}>{errorMessage}</p>}
 
           <div className={styles.divider}>
