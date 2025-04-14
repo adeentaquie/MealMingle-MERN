@@ -8,6 +8,10 @@ const UserSchema = new mongoose.Schema(
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    
+    // New fields for meals and comments
+    mealsShared: { type: Number, default: 0 },  // Default value is 0 for all users
+    comments: { type: Number, default: 0 },     // Default value is 0 for all users
   },
   { timestamps: true }
 );
