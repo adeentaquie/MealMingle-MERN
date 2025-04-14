@@ -31,14 +31,15 @@ export default function Login() {
       if (response.ok) {
         console.log("Login successful:", data);
 
-        // Store the userId in localStorage for persistence
+        // Store the userId and name in localStorage for persistence
         localStorage.setItem("userId", data.userId);
+        localStorage.setItem("name", data.name);
 
-        // Dispatch loginSuccess to store the userId in Redux
-        dispatch(loginSuccess({ userId: data.userId }));
+        // Dispatch loginSuccess to store the userId and name in Redux
+        dispatch(loginSuccess({ userId: data.userId, name: data.name }));
 
         // Redirect to the personalized dashboard
-        navigate(`/dashboard/${data.userId}`);
+        navigate(`/dashboard/${data.userId}`); // Redirect to the personalized dashboard
       } else {
         console.error("Invalid credentials:", data.message);
         dispatch(loginFailure({ message: data.message || "Invalid email or password" }));

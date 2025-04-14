@@ -1,13 +1,16 @@
 // src/pages/Dashboard.js
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchDashboardSuccess, fetchDashboardFailure, setLoading } from "../redux/slices/dashboardSlice";
+import { useParams } from "react-router-dom"; // Access userId from URL
+import { useDispatch, useSelector } from "react-redux"; // Access Redux state
+import { fetchDashboardSuccess, fetchDashboardFailure, setLoading } from "../redux/slices/dashboardSlice"; // Redux actions
 import styles from "../styling/Dashboard.module.css"; // Add styles
 
 export default function Dashboard() {
-  const { userId } = useParams(); // Get userId from URL
-  const { mealsShared, comments, loading, errorMessage } = useSelector((state) => state.dashboard); // Access state from Redux
+  const { userId } = useParams(); // Get userId from the URL
+  const { name } = useSelector((state) => state.auth); // Get the user's name from Redux state (auth slice)
+  const { mealsShared, comments, loading, errorMessage } = useSelector(
+    (state) => state.dashboard
+  ); // Access dashboard state from Redux
   const dispatch = useDispatch(); // Dispatch actions
 
   useEffect(() => {
@@ -29,7 +32,7 @@ export default function Dashboard() {
     };
 
     fetchDashboardData();
-  }, [dispatch, userId]); // Re-run this effect when the userId changes
+  }, [dispatch, userId]); // Re-run this effect when userId changes
 
   if (loading) {
     return (
@@ -44,10 +47,10 @@ export default function Dashboard() {
 
   return (
     <div className={styles.dashboardContainer}>
-      <h1>Welcome to Your Dashboard</h1>
+      <h1>Welcome, {name}!</h1> {/* Personalized greeting */}
       <div className={styles.dashboardInfo}>
-        <h2 data-value={mealsShared}>Your Meals Shared: {mealsShared}</h2>
-        <h2 data-value={comments}>Your Comments: {comments}</h2>
+        <h2>Your Meals Shared: {mealsShared}</h2>
+        <h2>Your Comments: {comments}</h2>
       </div>
       {errorMessage && <p className={styles.errorText}>{errorMessage}</p>}
     </div>
