@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate,Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import styles from "../styling/SignUpForm.module.css";
 
 const SignupForm = () => {
@@ -73,7 +73,12 @@ const SignupForm = () => {
 
       if (response.ok) {
         console.log("User created successfully:", data);
-        navigate("/"); // Redirect to homepage after successful signup
+
+        // Store the userId in localStorage for persistence
+        localStorage.setItem("userId", data.userId); // Store userId in localStorage
+
+        // Redirect to the personalized dashboard
+        navigate(`/dashboard/${data.userId}`); // Redirect to personalized dashboard with userId in the URL
       } else {
         console.error("Error:", data.message);
         setErrorMessage(data.message); // Set error message if signup fails

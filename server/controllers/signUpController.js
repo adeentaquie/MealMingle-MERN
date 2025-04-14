@@ -1,4 +1,3 @@
-// controllers/signUpController.js
 const User = require('../models/userModel');
 const bcrypt = require('bcryptjs'); // To hash the password
 
@@ -16,7 +15,7 @@ exports.signUpUser = async (req, res) => {
     // Hash the password before storing it
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Create new user
+    // Create new user without needing to set the userId (it will be auto-generated)
     const newUser = new User({
       name,
       email,
@@ -26,8 +25,11 @@ exports.signUpUser = async (req, res) => {
     // Save the user to the database
     await newUser.save();
 
-    // Send success response
-    res.status(201).json({ message: 'User created successfully' });
+    // Send success response with the userId
+    res.status(201).json({
+      message: 'User created successfully',
+      userId: newUser.userId, // Return the userId of the new user
+    });
   } catch (error) {
     console.error('Error during user signup:', error);
     res.status(500).json({ message: 'Server error, please try again later' });

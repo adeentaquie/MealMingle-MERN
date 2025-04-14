@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Spline from "@splinetool/react-spline";
 import logo from "../assets/logo.png"; // ✅ Make sure you have this image
 import styles from "../styling/Login.module.css";
 
@@ -16,7 +15,6 @@ export default function Login() {
     setIsLoading(true);
     setErrorMessage(""); // Clear previous error message
 
-    // Simulate API call to validate user credentials
     try {
       const response = await fetch("http://localhost:5000/api/login", {
         method: "POST",
@@ -30,8 +28,12 @@ export default function Login() {
 
       if (response.ok) {
         console.log("Login successful:", data);
-        // Redirect user after successful login
-        navigate("/dashboard"); // Example: Navigate to the dashboard
+
+        // Store the userId in localStorage for persistence
+        localStorage.setItem("userId", data.userId); // Store userId in localStorage
+
+        // Redirect to the personalized dashboard
+        navigate(`/dashboard/${data.userId}`); // Redirect to personalized dashboard with userId in the URL
       } else {
         console.error("Invalid credentials:", data.message);
         setErrorMessage(data.message || "Invalid email or password"); // Show error message
