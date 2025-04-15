@@ -50,7 +50,7 @@ export default function MealsPage() {
         ) : error ? (
           <p className={classes.error}>{error}</p>
         ) : (
-          <MealsGrid meals={meals} /> // Pass the fetched meals to the MealsGrid component
+          <MealsGrid meals={meals} userid={userId}/> // Pass the fetched meals to the MealsGrid component
         )}
       </main>
     </>

@@ -7,3 +7,9 @@ export const getMeals = async () => {
     const data = await response.json();
     return data; // Return meal data
 };
+
+export const getMealBySlug = async (slug) => {
+    const meals = await getMeals(); // Get all meals
+    const meal = meals.find(meal => meal.slug === slug); // Find the meal by slug
+    return meal; // Return the found meal
+}

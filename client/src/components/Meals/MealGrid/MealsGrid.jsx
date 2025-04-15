@@ -2,7 +2,7 @@
 import MealItem from '../MealItem/MealItem';
 import classes from './MealsGrid.module.css'; // Adjusted className
 
-export default function MealsGrid({ meals }) {
+export default function MealsGrid({ meals,userid }) {
   return (
     <ul className={classes.meals}>
       {meals.map((meal) => (
@@ -13,9 +13,9 @@ export default function MealsGrid({ meals }) {
             image={`http://localhost:5000/${meal.image}`}  // Correct URL structure
             summary={meal.summary} 
             creator={meal.creator} 
+            userid={userid}
 
           />
-                      <p>{`http://localhost:5000/images/${meal.image}`}</p> {/* Log the image path */}
 
         </li>
       ))}

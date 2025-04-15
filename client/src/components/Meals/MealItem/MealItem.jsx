@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom'; // Use react-router-dom Link
 import classes from './MealItem.module.css'; // Adjusted className
 
-export default function MealItem({ title, slug, image, summary, creator }) {
+export default function MealItem({ title, slug, image, summary, creator,userid }) {
     return (
       <article className={classes.meal}>
         <header>
@@ -18,7 +18,7 @@ export default function MealItem({ title, slug, image, summary, creator }) {
         <div className={classes.content}>
           <p className={classes.summary}>{summary}</p>
           <div className={classes.actions}>
-            <Link to={`/meals/${slug}`}>View Details</Link>
+            <Link to={`/meals/${userid}/${slug}`}>View Details</Link>
           </div>
         </div>
       </article>

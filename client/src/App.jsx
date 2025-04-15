@@ -12,7 +12,7 @@ import SignupForm from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import MealsPage from "./pages/MealsPage";
 import ShareMealPage from "./pages/ShareMealPage";
-
+import MealDetailPage from "./pages/MealDetailPage";
 function App() {
   return (
     <Router>
@@ -45,6 +45,8 @@ function AppRoutes() {
 
         {/* ShareMealPage should be evaluated second */}
         <Route path="/meals/:userId/share" element={<ShareMealPage />} /> {/* ShareMealPage route should be second */}
+        <Route path="/meals/:userId/:slug" element={<MealDetailPage />} />
+
       </Routes>
     </>
   );
