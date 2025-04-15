@@ -2,13 +2,16 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom"; // Access userId from URL
 import { useDispatch, useSelector } from "react-redux"; // Access Redux state
-import { fetchDashboardSuccess, fetchDashboardFailure, setLoading } from "../redux/slices/dashboardSlice"; // Redux actions
+import {
+  fetchDashboardSuccess,
+  fetchDashboardFailure,
+  setLoading,
+} from "../redux/slices/dashboardSlice"; // Redux actions
 import styles from "../styling/Dashboard.module.css"; // Add styles
 
 export default function Dashboard() {
   const { userId } = useParams(); // Get userId from the URL
-  const { name } = useSelector((state) => state.auth); // Get the user's name from Redux state (auth slice)
-  const { mealsShared, comments, loading, errorMessage } = useSelector(
+  const { name, mealsShared, comments, loading, errorMessage } = useSelector(
     (state) => state.dashboard
   ); // Access dashboard state from Redux
   const dispatch = useDispatch(); // Dispatch actions
@@ -18,16 +21,30 @@ export default function Dashboard() {
       dispatch(setLoading()); // Set loading to true before the request
 
       try {
-        const response = await fetch(`http://localhost:5000/api/dashboard/${userId}`);
+        const response = await fetch(
+          `http://localhost:5000/api/dashboard/${userId}`
+        );
         const data = await response.json();
 
         if (response.ok) {
-          dispatch(fetchDashboardSuccess({ mealsShared: data.mealsShared, comments: data.comments }));
+          dispatch(
+            fetchDashboardSuccess({
+              name: data.name,
+              mealsShared: data.mealsShared,
+              comments: data.comments,
+            })
+          );
         } else {
-          dispatch(fetchDashboardFailure({ message: data.message || "Failed to load dashboard data." }));
+          dispatch(
+            fetchDashboardFailure({
+              message: data.message || "Failed to load dashboard data.",
+            })
+          );
         }
       } catch (error) {
-        dispatch(fetchDashboardFailure({ message: "Error fetching dashboard data." }));
+        dispatch(
+          fetchDashboardFailure({ message: "Error fetching dashboard data." })
+        );
       }
     };
 

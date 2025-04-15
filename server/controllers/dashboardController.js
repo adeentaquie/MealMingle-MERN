@@ -13,6 +13,7 @@ const getDashboardData = async (req, res) => {
 
     // Send back the user's meals shared and comments
     res.json({
+      name:user.name,
       mealsShared: user.mealsShared,
       comments: user.comments,
     });

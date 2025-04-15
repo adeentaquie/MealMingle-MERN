@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 // Initial state for the dashboard
 const initialState = {
+  name: "", // Add name to the initial state
   mealsShared: 0,
   comments: 0,
   loading: false,
@@ -18,6 +19,7 @@ const dashboardSlice = createSlice({
     fetchDashboardSuccess: (state, action) => {
       state.mealsShared = action.payload.mealsShared;
       state.comments = action.payload.comments;
+      state.name=action.payload.name
       state.loading = false;
       state.errorMessage = "";
     },
@@ -25,6 +27,7 @@ const dashboardSlice = createSlice({
     fetchDashboardFailure: (state, action) => {
       state.errorMessage = action.payload.message;
       state.loading = false;
+
     },
     // Set loading state during dashboard fetch
     setLoading: (state) => {
@@ -36,6 +39,7 @@ const dashboardSlice = createSlice({
       state.comments = 0;
       state.loading = false;
       state.errorMessage = "";
+      state.name="";
     },
   },
 });
