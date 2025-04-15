@@ -12,6 +12,8 @@ export default function MealsPage() {
   // Get the userId from localStorage (or state if applicable)
   const userId = localStorage.getItem("userId");  // Assumes you are storing userId in localStorage
 
+
+
   // Use effect to fetch meals when the page loads
   useEffect(() => {
     const fetchMeals = async () => {

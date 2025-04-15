@@ -7,8 +7,8 @@ export default function MealItem({ title, slug, image, summary, creator }) {
       <article className={classes.meal}>
         <header>
           <div className={classes.image}>
-            {/* Assuming the image prop contains the relative path like '/images/dumplings.jpg' */}
-            <img src={image} alt={title} className={classes.image} /> {/* Updated image path */}
+            {/* The image will now take up the full width of its container */}
+            <img src={image} alt={title} className={classes.image} />
           </div>
           <div className={classes.headerText}>
             <h2>{title}</h2>
@@ -23,4 +23,4 @@ export default function MealItem({ title, slug, image, summary, creator }) {
         </div>
       </article>
     );
-  }
+}

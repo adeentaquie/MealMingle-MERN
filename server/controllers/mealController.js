@@ -1,7 +1,6 @@
 // src/controllers/mealController.js
-const Meal = require('../models/mealModel'); // Import the Meal model
+const Meal = require('../models/mealModel');
 
-// Function to fetch all meals from the database
 const getMeals = async (req, res) => {
   try {
     const meals = await Meal.find(); // Fetch all meals from the database

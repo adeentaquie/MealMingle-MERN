@@ -38,7 +38,14 @@ export default function ShareMealPage() {
 
   // Form validation function
   const validateForm = () => {
-    return formData.name && formData.email && formData.title && formData.summary && formData.instructions && formData.image;
+    return (
+      formData.name &&
+      formData.email &&
+      formData.title &&
+      formData.summary &&
+      formData.instructions &&
+      formData.image
+    );
   };
 
   // Handle form submission
@@ -61,14 +68,18 @@ export default function ShareMealPage() {
     mealData.append("summary", formData.summary);
     mealData.append("instructions", formData.instructions);
     if (formData.image) {
-      mealData.append("image", formData.image);
+      mealData.append("image", formData.image); // Append the selected image
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/meals/${userId}/share`, {
-        method: "POST",
-        body: mealData,
-      });
+      const response = await fetch(
+        `http://localhost:5000/api/meals/${userId}/share`, // Correct endpoint
+        {
+          method: "POST",
+          body: mealData,
+        }
+      );
+
       const data = await response.json();
 
       if (response.ok) {
@@ -141,11 +152,18 @@ export default function ShareMealPage() {
             onChange={handleChange}
             required
           />
-          <ImagePicker label="Your Image" name="image" onImageChange={handleImageChange} />
+          <ImagePicker
+            label="Your Image"
+            name="image"
+            onImageChange={handleImageChange}
+          />
           {message && <p>{message}</p>} {/* Display message */}
-          
           {/* Submit Button */}
-          <button type="submit" disabled={isSubmitting} className={classes.submitButton}>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className={classes.submitButton}
+          >
             {isSubmitting ? "Submitting..." : "Share Meal"}
           </button>
         </form>

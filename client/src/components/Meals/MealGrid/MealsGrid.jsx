@@ -10,10 +10,13 @@ export default function MealsGrid({ meals }) {
           <MealItem 
             title={meal.title} 
             slug={meal.slug} 
-            image={`/images/${meal.image}`}  
+            image={`http://localhost:5000/${meal.image}`}  // Correct URL structure
             summary={meal.summary} 
             creator={meal.creator} 
+
           />
+                      <p>{`http://localhost:5000/images/${meal.image}`}</p> {/* Log the image path */}
+
         </li>
       ))}
     </ul>
