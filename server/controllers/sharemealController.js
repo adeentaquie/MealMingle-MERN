@@ -1,29 +1,39 @@
-// src/controllers/ShareMealController.js
 const Meal = require("../models/mealModel");
+const User = require("../models/userModel");  // Import the User model
 const path = require("path");
 
-// Controller function to handle sharing a meal
 const shareMeal = async (req, res) => {
   try {
+    const { userId } = req.params;  // Capture the userId from the route parameter
     const { title, summary, instructions, name, email } = req.body;
 
-    // The image path is saved as 'images/{image-name}' (relative to public/images)
+    // Save the image path relative to the /public/images folder
     const imagePath = path.join("images", req.file.filename); // e.g., 'images/image-174472.jpg'
 
-    // Create a new meal in the database
+    // Create and save the new meal to the database
     const newMeal = new Meal({
       title,
-      slug: title.replace(/\s+/g, "-").toLowerCase(), // Slug based on the title
-      image: imagePath, // Store the relative path to the image
+      slug: title.replace(/\s+/g, "-").toLowerCase(),
+      image: imagePath,
       summary,
       instructions,
       creator: name,
       creator_email: email,
     });
 
-    // Save the new meal in the database
+    // Save the meal in the database
     await newMeal.save();
-    res.status(201).json({ message: "Meal shared successfully!" }); // Success message
+
+    // Increment the mealsShared count for the user
+    const user = await User.findOne({ userId });  // Find the user by userId
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.mealsShared += 1;  // Increment the mealsShared field
+    await user.save();  // Save the updated user document
+
+    res.status(201).json({ message: "Meal shared successfully!" }); // Send response
   } catch (error) {
     console.error("Error sharing meal:", error);
     res.status(500).json({ message: "Failed to share meal", error: error.message });
