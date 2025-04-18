@@ -10,6 +10,17 @@ const mealSchema = new mongoose.Schema(
     instructions: { type: String, required: true },
     creator: { type: String, required: true },
     creator_email: { type: String, required: true },
+    comments: [
+      {
+        userId: {
+          type: Number,
+          ref: "User",
+          required: true,
+        }, // User who commented (using userId)
+        commentText: { type: String, required: true }, // The comment text
+        createdAt: { type: Date, default: Date.now }, // Timestamp for when the comment was made
+      },
+    ],
   },
   { timestamps: true }
 );

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { redirect, useNavigate, useParams } from "react-router-dom";
 import ImagePicker from "../components/Meals/ImagePicker/ImagePicker"; // Image Picker Component
 import classes from "../styling/ShareMealPage.module.css"; // Assuming your CSS is inside this file
 
@@ -55,7 +55,6 @@ export default function ShareMealPage() {
     // Validate the form before submission
     if (!validateForm()) {
       setMessage("Please fill in all fields and select an image.");
-      return;
     }
 
     setIsSubmitting(true); // Set loading state

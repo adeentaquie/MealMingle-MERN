@@ -1,20 +1,32 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom"; // Access userId and slug from URL
-import { getMealBySlug } from "../components/Meals/getmeals"; // Import the function to fetch meal by slug
-import classes from "../styling/MealDetailPage.module.css"; // Adjust the path for your styling
+import { useParams } from "react-router-dom";
+import { getMealBySlug } from "../components/Meals/getmeals";
+import classes from "../styling/MealDetailPage.module.css";
 
 export default function MealDetailPage() {
-  const { userId, slug } = useParams(); // Get userId and slug from the URL
+  const { userId, slug } = useParams();
   const [meal, setMeal] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState("");
+  const [userName, setUserName] = useState(""); // ✅ define userName
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchMeal = async () => {
       try {
-        const mealData = await getMealBySlug(slug); // Get the meal by slug
-        setMeal(mealData); // Set meal data to state
-        setLoading(false); // Stop loading
+        const mealData = await getMealBySlug(slug);
+        setMeal(mealData);
+        // ✅ Format comments to match frontend structure
+        const formattedComments = mealData.comments.map((c, index) => ({
+          id: index + 1,
+          user: c.userId?.name || "Anonymous",
+          text: c.commentText,
+          date: new Date(c.createdAt).toISOString().split("T")[0],
+        }));
+        setComments(formattedComments);
+        setLoading(false);
       } catch (err) {
         setError("Failed to fetch meal data.");
         setLoading(false);
@@ -22,21 +34,57 @@ export default function MealDetailPage() {
     };
 
     fetchMeal();
-  }, [slug]); // Re-fetch the meal if the slug changes
+  }, [slug]);
 
-  if (loading) {
-    return <div>Loading...</div>; // Loading state
-  }
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    if (newComment.trim() === "" || userName.trim() === "") return;
+  
+    setIsSubmitting(true);
+  
+    try {
+      const response = await fetch(`http://localhost:5000/api/meals/${slug}/comment`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: Number(userId), // ✅ Treat userId as a number like in share meal
+          commentText: newComment,
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to post comment");
+      }
+  
+      // Add comment locally
+      const newCommentObj = {
+        id: comments.length + 1,
+        user: userName,
+        text: newComment,
+        date: new Date().toISOString().split("T")[0],
+      };
+  
+      setComments([...comments, newCommentObj]);
+      setNewComment("");
+    } catch (error) {
+      console.error("Error submitting comment:", error);
+      alert("Failed to submit comment.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  
+  
 
-  if (error) {
-    return <div>{error}</div>; // Error state
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+  if (!meal) return <div>Meal not found</div>;
 
-  if (!meal) {
-    return <div>Meal not found</div>; // If no meal is found
-  }
-
-  meal.instructions = meal.instructions.replace(/\n/g, "<br/>"); // Process instructions for HTML
+  meal.instructions = meal.instructions.replace(/\n/g, "<br/>");
 
   return (
     <>
@@ -52,14 +100,57 @@ export default function MealDetailPage() {
           <p className={classes.summary}>{meal.summary}</p>
         </div>
       </header>
+
       <main>
         <p
           className={classes.instructions}
-          dangerouslySetInnerHTML={{
-            __html: meal.instructions, // Render HTML for instructions
-          }}
+          dangerouslySetInnerHTML={{ __html: meal.instructions }}
         ></p>
       </main>
+
+      <section className={classes.commentsSection}>
+        <div className={classes.commentsHeader}>
+          <h2>Comments</h2>
+         
+        </div>
+
+        <div className={classes.commentsList}>
+          {comments.map((comment) => (
+            <div key={comment.id} className={classes.commentCard}>
+              <div className={classes.commentHeader}>
+                <span className={classes.commentUser}>{comment.user}</span>
+                <span className={classes.commentDate}>{comment.date}</span>
+              </div>
+              <p className={classes.commentText}>{comment.text}</p>
+            </div>
+          ))}
+        </div>
+
+        <form className={classes.commentForm} onSubmit={handleCommentSubmit}>
+          <div className={classes.formGroup}>
+            <input
+              type="text"
+              placeholder="Your Name"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              className={classes.commentInput}
+              required
+            />
+          </div>
+          <div className={classes.formGroup}>
+            <textarea
+              placeholder="Add your comment..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              className={classes.commentTextarea}
+              required
+            />
+          </div>
+          <button type="submit" className={classes.submitButton}>
+            Post Comment
+          </button>
+        </form>
+      </section>
     </>
   );
 }
