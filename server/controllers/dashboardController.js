@@ -1,21 +1,41 @@
-// controllers/dashboardController.js
-const User = require("../models/userModel"); // Import the User model
+const Meal = require("../models/mealModel");
+const User = require("../models/userModel");
 
-// Controller to fetch dashboard data (meals shared and comments) for a user
 const getDashboardData = async (req, res) => {
   const { userId } = req.params;
 
   try {
-    const user = await User.findOne({ userId }); // Find user by userId
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    const user = await User.findOne({ userId }); // userId is numeric
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Send back the user's meals shared and comments
+    // 1. Get meals created by this user
+    const meals = await Meal.find({ creator_email: user.email }).select("title slug image");
+
+    // 2. Get all meals where this user has commented (via ObjectId)
+    const allMeals = await Meal.find({ "comments.userId": user._id });
+
+    const userComments = [];
+
+    allMeals.forEach(meal => {
+      meal.comments.forEach(comment => {
+        if (comment.userId.toString() === user._id.toString()) {
+          userComments.push({
+            mealTitle: meal.title,
+            mealSlug: meal.slug,
+            commentText: comment.commentText,
+            createdAt: comment.createdAt,
+          });
+        }
+      });
+    });
+
+    // ✅ Return accurate count from filtered list
     res.json({
-      name:user.name,
-      mealsShared: user.mealsShared,
-      comments: user.comments,
+      name: user.name,
+      mealsShared: meals.length,
+      comments: userComments.length,
+      sharedMeals: meals,
+      commentsList: userComments,
     });
   } catch (error) {
     console.error("Error fetching dashboard data:", error);

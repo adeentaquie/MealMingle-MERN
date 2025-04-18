@@ -6,6 +6,8 @@ const initialState = {
   name: "", // Add name to the initial state
   mealsShared: 0,
   comments: 0,
+  sharedMeals: [],
+  commentsList: [],
   loading: false,
   errorMessage: "",
 };
@@ -17,12 +19,16 @@ const dashboardSlice = createSlice({
   reducers: {
     // Set dashboard data on successful fetch
     fetchDashboardSuccess: (state, action) => {
-      state.mealsShared = action.payload.mealsShared;
-      state.comments = action.payload.comments;
-      state.name=action.payload.name
+      const { name, mealsShared, comments, sharedMeals, commentsList } = action.payload;
+      state.name = name;
+      state.mealsShared = mealsShared;
+      state.sharedMeals = sharedMeals;
+      state.commentsList = commentsList;
+      state.comments = commentsList.length; // ✅ Use actual length of the list
       state.loading = false;
-      state.errorMessage = "";
+      state.errorMessage = null;
     },
+    
     // Handle dashboard fetch error
     fetchDashboardFailure: (state, action) => {
       state.errorMessage = action.payload.message;
@@ -35,12 +41,15 @@ const dashboardSlice = createSlice({
     },
     // Reset the dashboard state
     resetDashboard: (state) => {
+      state.name = "";
       state.mealsShared = 0;
       state.comments = 0;
+      state.sharedMeals = [];        // ✅ clear meals
+      state.commentsList = [];      // ✅ clear comments
       state.loading = false;
       state.errorMessage = "";
-      state.name="";
     },
+    
   },
 });
 
