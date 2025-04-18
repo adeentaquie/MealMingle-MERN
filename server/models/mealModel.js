@@ -13,12 +13,12 @@ const mealSchema = new mongoose.Schema(
     comments: [
       {
         userId: {
-          type: Number,
+          type: mongoose.Schema.Types.ObjectId,
           ref: "User",
           required: true,
-        }, // User who commented (using userId)
-        commentText: { type: String, required: true }, // The comment text
-        createdAt: { type: Date, default: Date.now }, // Timestamp for when the comment was made
+        },
+        commentText: { type: String, required: true },
+        createdAt: { type: Date, default: Date.now },
       },
     ],
   },

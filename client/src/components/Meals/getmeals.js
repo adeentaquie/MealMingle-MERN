@@ -9,7 +9,9 @@ export const getMeals = async () => {
 };
 
 export const getMealBySlug = async (slug) => {
-    const meals = await getMeals(); // Get all meals
-    const meal = meals.find(meal => meal.slug === slug); // Find the meal by slug
-    return meal; // Return the found meal
-}
+    const response = await fetch(`http://localhost:5000/api/meals/slug/${slug}`); // ✅ This hits your backend
+    if (!response.ok) {
+      throw new Error('Failed to fetch meal by slug');
+    }
+    return await response.json();
+  };

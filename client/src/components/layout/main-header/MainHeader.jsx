@@ -13,7 +13,7 @@ export default function MainHeader() {
 
   // Dynamically construct the href for Browse Meals based on userId
   const mealsLink = userId ? `/meals/${userId}` : "/meals"; // Fallback to '/meals' if no userId
-
+  const dashboardLink= userId ? `/dashboard/${userId}` : "/" 
   // Handle logout logic when the user clicks the Logout link
   const handleLogout = () => {
     dispatch(logout()); // Dispatch the logout action to reset the state
@@ -35,6 +35,10 @@ export default function MainHeader() {
             <li>
               {/* Dynamically link to the meals page with userId if logged in */}
               <NavLink to={mealsLink}>Browse Meals</NavLink>
+            </li>
+            <li>
+              {/* Dynamically link to the meals page with userId if logged in */}
+              <NavLink to={dashboardLink}>User Dashboard</NavLink>
             </li>
             <li>
               <NavLink to="/community">Community</NavLink>

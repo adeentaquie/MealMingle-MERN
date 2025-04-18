@@ -10,15 +10,16 @@ export default function MealDetailPage() {
   const [error, setError] = useState(null);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
-  const [userName, setUserName] = useState(""); // ✅ define userName
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Fetch meal + populated comments
   useEffect(() => {
     const fetchMeal = async () => {
       try {
         const mealData = await getMealBySlug(slug);
         setMeal(mealData);
-        // ✅ Format comments to match frontend structure
+
+        // Format comments with populated names
         const formattedComments = mealData.comments.map((c, index) => ({
           id: index + 1,
           user: c.userId?.name || "Anonymous",
@@ -36,12 +37,13 @@ export default function MealDetailPage() {
     fetchMeal();
   }, [slug]);
 
+  // Handle comment submission
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
-    if (newComment.trim() === "" || userName.trim() === "") return;
-  
+    if (newComment.trim() === "") return;
+
     setIsSubmitting(true);
-  
+
     try {
       const response = await fetch(`http://localhost:5000/api/meals/${slug}/comment`, {
         method: "POST",
@@ -49,25 +51,25 @@ export default function MealDetailPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId: Number(userId), // ✅ Treat userId as a number like in share meal
+          userId: Number(userId),
           commentText: newComment,
         }),
       });
-  
+
       const data = await response.json();
-  
+
       if (!response.ok) {
         throw new Error(data.error || "Failed to post comment");
       }
-  
-      // Add comment locally
+
+      // Add comment to state from backend response (includes name)
       const newCommentObj = {
         id: comments.length + 1,
-        user: userName,
-        text: newComment,
-        date: new Date().toISOString().split("T")[0],
+        user: data.comment.user,
+        text: data.comment.text,
+        date: data.comment.date,
       };
-  
+
       setComments([...comments, newCommentObj]);
       setNewComment("");
     } catch (error) {
@@ -77,8 +79,6 @@ export default function MealDetailPage() {
       setIsSubmitting(false);
     }
   };
-  
-  
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
@@ -111,7 +111,6 @@ export default function MealDetailPage() {
       <section className={classes.commentsSection}>
         <div className={classes.commentsHeader}>
           <h2>Comments</h2>
-         
         </div>
 
         <div className={classes.commentsList}>
@@ -128,16 +127,6 @@ export default function MealDetailPage() {
 
         <form className={classes.commentForm} onSubmit={handleCommentSubmit}>
           <div className={classes.formGroup}>
-            <input
-              type="text"
-              placeholder="Your Name"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              className={classes.commentInput}
-              required
-            />
-          </div>
-          <div className={classes.formGroup}>
             <textarea
               placeholder="Add your comment..."
               value={newComment}
@@ -146,8 +135,8 @@ export default function MealDetailPage() {
               required
             />
           </div>
-          <button type="submit" className={classes.submitButton}>
-            Post Comment
+          <button type="submit" className={classes.submitButton} disabled={isSubmitting}>
+            {isSubmitting ? "Posting..." : "Post Comment"}
           </button>
         </form>
       </section>

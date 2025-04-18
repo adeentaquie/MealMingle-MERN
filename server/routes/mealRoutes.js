@@ -1,10 +1,13 @@
 // src/routes/mealRoutes.js
 const express = require('express');
-const { getMeals } = require('../controllers/mealController'); // Make sure it's the correct import
+const { getMeals, getMealBySlug } = require('../controllers/mealController');
 
 const router = express.Router();
 
-// Ensure this route exists in the backend
-router.get('/', getMeals); // Make sure 'getMeals' is a valid function
+// Get all meals
+router.get('/', getMeals);
+
+// ✅ Get a specific meal by slug with comment user names
+router.get('/slug/:slug', getMealBySlug);
 
 module.exports = router;
