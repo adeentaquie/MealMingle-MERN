@@ -32,25 +32,25 @@ export default function Home() {
         <section className={classes.section}>
           <h2>How it works</h2>
           <p>
-            NextLevel Food is a platform for foodies to share their favorite
+            Meal Mingle is a platform for foodies to share their favorite
             recipes with the world. It's a place to discover new dishes, and to
             connect with other food lovers.
           </p>
           <p>
-            NextLevel Food is a place to discover new dishes, and to connect
+            Meal Mingle is a place to discover new dishes, and to connect
             with other food lovers.
           </p>
         </section>
 
         <section className={classes.section}>
-          <h2>Why My Restaurant?</h2>
+          <h2>Why Meal Mingle?</h2>
           <p>
-            My Restaurant is a platform for foodies to share their favorite
+            Meal Mingle is a platform for foodies to share their favorite
             recipes with the world. It's a place to discover new dishes, and to
             connect with other food lovers.
           </p>
           <p>
-            My Restaurant is a place to discover new dishes, and to connect
+            Meal Mingle  is a place to discover new dishes, and to connect
             with other food lovers.
           </p>
 
