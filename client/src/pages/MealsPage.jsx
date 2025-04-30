@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom'; // Use react-router-dom Link for routing
 import MealsGrid from '../components/Meals/MealGrid/MealsGrid'; // Component to display meals
 import { getMeals } from '../components/Meals/getmeals'; // Your data fetching function
@@ -8,34 +8,27 @@ export default function MealsPage() {
   const [meals, setMeals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(1); // Pagination state
 
   // Get the userId from localStorage (or state if applicable)
-  const userId = localStorage.getItem("userId");
+  const userId = localStorage.getItem("userId");  // Assumes you are storing userId in localStorage
 
-  // Handle case when userId is not found in localStorage
-  if (!userId) {
-    setError("User not logged in. Please log in to view meals.");
-    setLoading(false);
-  }
 
-  // Fetch meals with pagination
-  const fetchMeals = useCallback(async () => {
-    setLoading(true);
-    try {
-      const mealsData = await getMeals(page); // Pass current page for pagination
-      setMeals((prevMeals) => [...prevMeals, ...mealsData]); // Append new meals to the list
-    } catch (err) {
-      setError('Failed to load meals');
-    } finally {
-      setLoading(false);
-    }
-  }, [page]);
 
-  // Use effect to fetch meals when the page loads or page changes
+  // Use effect to fetch meals when the page loads
   useEffect(() => {
-    fetchMeals();
-  }, [fetchMeals]);
+    const fetchMeals = async () => {
+      try {
+        const mealsData = await getMeals();
+        setMeals(mealsData); // Set the meals data into the state
+      } catch (err) {
+        setError('Failed to load meals'); // Handle errors
+      } finally {
+        setLoading(false); // Set loading to false after data is fetched
+      }
+    };
+
+    fetchMeals(); // Call fetchMeals function on component mount
+  }, []); // Empty dependency array means this runs only once when the component mounts
 
   return (
     <>
@@ -47,11 +40,8 @@ export default function MealsPage() {
           Choose your favorite recipe and cook it yourself. It is easy and fun!
         </p>
         <p className={classes.cta}>
-          {userId ? (
-            <Link to={`/meals/${userId}/share`}>Share Your Favorite Recipe</Link>
-          ) : (
-            <span>Please log in to share a recipe</span>
-          )}
+          {/* Dynamically link to the Share Meal page for the current user */}
+          <Link to={`/meals/${userId}/share`}>Share Your Favorite Recipe</Link>
         </p>
       </header>
       <main className={classes.main}>
@@ -61,11 +51,6 @@ export default function MealsPage() {
           <p className={classes.error}>{error}</p>
         ) : (
           <MealsGrid meals={meals} userid={userId}/> // Pass the fetched meals to the MealsGrid component
-        )}
-        {!loading && (
-          <button onClick={() => setPage(page + 1)} disabled={loading}>
-            Load More
-          </button>
         )}
       </main>
     </>
