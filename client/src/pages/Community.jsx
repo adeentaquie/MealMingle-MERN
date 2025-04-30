@@ -1,56 +1,39 @@
-// Community.jsx
-import styled from "styled-components";
-...
-const Header = styled.header`
-  text-align: center;
-  margin-bottom: 2rem;
-`;
+import React from "react";
+import styles from "../styling/Community.module.css";
 
-const Highlight = styled.span`
-  color: #e67e22;
-`;
-
-const Main = styled.main`
-  padding: 2rem;
-`;
-
-const Perks = styled.ul`
-  display: flex;
-  gap: 2rem;
-  justify-content: center;
-`;
-
-const PerkCard = styled.li`
-  list-style: none;
-  text-align: center;
-`;
+// Import images as normal
+import mealIcon from "../assets/icons/meal.png";
+import communityIcon from "../assets/icons/community.png";
+import eventsIcon from "../assets/icons/events.png";
 
 function CommunityPage() {
   return (
     <>
-      <Header>
+      <header className={styles.header}>
         <h1>
-          One shared passion: <Highlight>Food</Highlight>
+          One shared passion: <span className={styles.highlight}>Food</span>
         </h1>
         <p>Join our community and share your favorite recipes!</p>
-      </Header>
-      <Main>
+      </header>
+      <main className={styles.main}>
         <h2>Community Perks</h2>
-        <Perks>
-          <PerkCard>
+        <ul className={styles.perks}>
+          <li>
             <img src={mealIcon} alt="A delicious meal" />
             <p>Share & discover recipes</p>
-          </PerkCard>
-          <PerkCard>
+          </li>
+          <li>
             <img src={communityIcon} alt="A crowd of people, cooking" />
             <p>Find new friends & like-minded people</p>
-          </PerkCard>
-          <PerkCard>
-            <img src={eventsIcon} alt="A crowd at a cooking event" />
+          </li>
+          <li>
+            <img src={eventsIcon} alt="A crowd of people at a cooking event" />
             <p>Participate in exclusive events</p>
-          </PerkCard>
-        </Perks>
-      </Main>
+          </li>
+        </ul>
+      </main>
     </>
   );
 }
+
+export default CommunityPage;
