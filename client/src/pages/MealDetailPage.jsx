@@ -13,7 +13,12 @@ export default function MealDetailPage() {
     const fetchMeal = async () => {
       const data = await getMealBySlug(slug);
       setMeal(data);
-      setComments(data.comments || []);
+      const formatted = (data.comments || []).map((c) => ({
+        user: c.userId?.name || "Anonymous",
+        text: c.commentText,
+        date: new Date(c.createdAt).toLocaleDateString(),
+      }));
+      setComments(formatted);
       setLoading(false);
     };
     fetchMeal();
@@ -30,7 +35,9 @@ export default function MealDetailPage() {
         <h2>Comments</h2>
         <ul>
           {comments.map((c, idx) => (
-            <li key={idx}>{c.commentText}</li>
+            <li key={idx}>
+              <strong>{c.user}</strong> on {c.date}: {c.text}
+            </li>
           ))}
         </ul>
       </section>
