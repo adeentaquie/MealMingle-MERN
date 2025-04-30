@@ -1,10 +1,19 @@
+// Community.jsx
 import React from "react";
 import styles from "../styling/Community.module.css";
-
-// Import images as normal
 import mealIcon from "../assets/icons/meal.png";
 import communityIcon from "../assets/icons/community.png";
 import eventsIcon from "../assets/icons/events.png";
+
+// New reusable component
+function PerkCard({ icon, alt, text }) {
+  return (
+    <li className={styles.perkCard}>
+      <img src={icon} alt={alt} />
+      <p>{text}</p>
+    </li>
+  );
+}
 
 function CommunityPage() {
   return (
@@ -18,18 +27,9 @@ function CommunityPage() {
       <main className={styles.main}>
         <h2>Community Perks</h2>
         <ul className={styles.perks}>
-          <li>
-            <img src={mealIcon} alt="A delicious meal" />
-            <p>Share & discover recipes</p>
-          </li>
-          <li>
-            <img src={communityIcon} alt="A crowd of people, cooking" />
-            <p>Find new friends & like-minded people</p>
-          </li>
-          <li>
-            <img src={eventsIcon} alt="A crowd of people at a cooking event" />
-            <p>Participate in exclusive events</p>
-          </li>
+          <PerkCard icon={mealIcon} alt="A delicious meal" text="Share & discover recipes" />
+          <PerkCard icon={communityIcon} alt="A crowd of people, cooking" text="Find new friends & like-minded people" />
+          <PerkCard icon={eventsIcon} alt="A crowd at a cooking event" text="Participate in exclusive events" />
         </ul>
       </main>
     </>
