@@ -4,10 +4,12 @@ import classes from "../styling/MealDetailPage.module.css";
 import { getMealBySlug } from "../components/Meals/getmeals";
 
 export default function MealDetailPage() {
-  const { slug } = useParams();
+  const { slug, userId } = useParams();
   const [meal, setMeal] = useState(null);
   const [loading, setLoading] = useState(true);
   const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchMeal = async () => {
@@ -23,6 +25,36 @@ export default function MealDetailPage() {
     };
     fetchMeal();
   }, [slug]);
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    if (!newComment.trim()) return;
+
+    setSubmitting(true);
+    try {
+      const response = await fetch(`http://localhost:5000/api/meals/${slug}/comment`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, commentText: newComment }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Failed");
+
+      setComments([
+        ...comments,
+        {
+          user: data.comment.user || "You",
+          text: data.comment.text,
+          date: new Date(data.comment.date).toLocaleDateString(),
+        },
+      ]);
+      setNewComment("");
+    } catch (err) {
+      alert("Failed to post comment");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   if (loading) return <div>Loading...</div>;
 
@@ -40,6 +72,17 @@ export default function MealDetailPage() {
             </li>
           ))}
         </ul>
+        <form onSubmit={handleCommentSubmit}>
+          <textarea
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Add your comment..."
+            required
+          />
+          <button type="submit" disabled={submitting}>
+            {submitting ? "Posting..." : "Post Comment"}
+          </button>
+        </form>
       </section>
     </div>
   );
