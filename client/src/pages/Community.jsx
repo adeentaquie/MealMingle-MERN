@@ -1,20 +1,56 @@
 // Community.jsx
-import React, { useContext } from "react";
-import LanguageContext from "../context/LanguageContext";
+import styled from "styled-components";
 ...
-function CommunityPage() {
-  const language = useContext(LanguageContext);
-  const titleText = {
-    en: "One shared passion:",
-    es: "Una pasión compartida:",
-  };
+const Header = styled.header`
+  text-align: center;
+  margin-bottom: 2rem;
+`;
 
+const Highlight = styled.span`
+  color: #e67e22;
+`;
+
+const Main = styled.main`
+  padding: 2rem;
+`;
+
+const Perks = styled.ul`
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+`;
+
+const PerkCard = styled.li`
+  list-style: none;
+  text-align: center;
+`;
+
+function CommunityPage() {
   return (
     <>
-      <header className={styles.header}>
+      <Header>
         <h1>
-          {titleText[language]} <span className={styles.highlight}>Food</span>
+          One shared passion: <Highlight>Food</Highlight>
         </h1>
         <p>Join our community and share your favorite recipes!</p>
-      </header>
-      ...
+      </Header>
+      <Main>
+        <h2>Community Perks</h2>
+        <Perks>
+          <PerkCard>
+            <img src={mealIcon} alt="A delicious meal" />
+            <p>Share & discover recipes</p>
+          </PerkCard>
+          <PerkCard>
+            <img src={communityIcon} alt="A crowd of people, cooking" />
+            <p>Find new friends & like-minded people</p>
+          </PerkCard>
+          <PerkCard>
+            <img src={eventsIcon} alt="A crowd at a cooking event" />
+            <p>Participate in exclusive events</p>
+          </PerkCard>
+        </Perks>
+      </Main>
+    </>
+  );
+}
