@@ -12,8 +12,6 @@ export default function MealsPage() {
   // Get the userId from localStorage (or state if applicable)
   const userId = localStorage.getItem("userId");  // Assumes you are storing userId in localStorage
 
-
-
   // Use effect to fetch meals when the page loads
   useEffect(() => {
     const fetchMeals = async () => {
@@ -41,18 +39,4 @@ export default function MealsPage() {
         </p>
         <p className={classes.cta}>
           {/* Dynamically link to the Share Meal page for the current user */}
-          <Link to={`/meals/${userId}/share`}>Share Your Favorite Recipe</Link>
-        </p>
-      </header>
-      <main className={classes.main}>
-        {loading ? (
-          <p className={classes.loading}>Fetching meals...</p>
-        ) : error ? (
-          <p className={classes.error}>{error}</p>
-        ) : (
-          <MealsGrid meals={meals} userid={userId}/> // Pass the fetched meals to the MealsGrid component
-        )}
-      </main>
-    </>
-  );
-}
+          <Link to={`/meals/${userId}/share`
