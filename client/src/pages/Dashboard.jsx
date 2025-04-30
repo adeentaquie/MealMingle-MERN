@@ -32,6 +32,37 @@ function MealsSection({ sharedMeals, userId, mealsShared }) {
     </div>
   );
 }
+// Add this function in Dashboard component before useEffect
+const refreshDashboard = async () => {
+  dispatch(setLoading());
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/dashboard/${userId}`
+    );
+    const data = await response.json();
+    if (response.ok) {
+      dispatch(
+        fetchDashboardSuccess({
+          name: data.name,
+          mealsShared: data.mealsShared,
+          comments: data.comments,
+          sharedMeals: data.sharedMeals,
+          commentsList: data.commentsList,
+        })
+      );
+    } else {
+      dispatch(
+        fetchDashboardFailure({
+          message: data.message || "Failed to load dashboard data.",
+        })
+      );
+    }
+  } catch (error) {
+    dispatch(
+      fetchDashboardFailure({ message: "Error fetching dashboard data." })
+    );
+  }
+};
 
 function CommentsSection({ commentsList, comments }) {
   return (
